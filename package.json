@@ -1,23 +1,20 @@
 {
-  "name": "zeplin-html-to-pdf",
+  "name": "lambda-html-to-pdf",
   "version": "1.0.0",
+  "license" : "UNLICENSED",
   "description": "AWS Lambda function that converts HTML pages to PDF documents",
   "scripts": {
-    "test": "node local/index.js",
     "lint": "./node_modules/.bin/eslint --quiet .",
     "pack": "rm -f package.zip && zip package.zip -r index.js wkhtmltopdf utils",
-    "deploy-dev": "npm run pack && aws lambda update-function-code --region us-west-1 --function-name htmlToPdf --zip-file fileb://`pwd`/package.zip",
-    "deploy-prod": "npm run pack && aws lambda update-function-code --region us-west-2 --function-name htmlToPdf --zip-file fileb://`pwd`/package.zip"
+    "deploy-dev": "npm run pack && aws lambda update-function-code --region eu-west-1 --function-name htmlToPdf.dev --zip-file fileb://`pwd`/package.zip",
+    "deploy-test": "npm run pack && aws lambda update-function-code --region eu-west-1 --function-name htmlToPdf.test --zip-file fileb://`pwd`/package.zip",
+    "deploy-prod": "npm run pack && aws lambda update-function-code --region eu-west-1 --function-name htmlToPdf --zip-file fileb://`pwd`/package.zip"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zeplin/zeplin-html-to-pdf.git"
+    "url": "git+https://github.com/Uninite/lambda-html-to-pdf.git"
   },
   "bugs": {
-    "url": "https://github.com/zeplin/zeplin-html-to-pdf/issues"
-  },
-  "devDependencies": {
-    "eslint": "^4.0.0",
-    "eslint-config-zeplin": "git+ssh://git@github.com/zeplin/eslint-config-zeplin.git#v1.x.x"
+    "url": "https://github.com/Uninite/lambda-html-to-pdf/issues"
   }
 }

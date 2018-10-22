@@ -11,7 +11,16 @@ exports.handler = function handler(event, context, callback) {
         return;
     }
 
-    wkhtmltopdf(event.html)
+    // ["--page-size Letter", "--orientation Portrait", "--margin-bottom 1", "--margin-top 1", "--margin-right 1", "--margin-left 1"]
+    let pdfOptions = [];
+
+    if (event.options) {
+        pdfOptions = event.options;
+    } else {
+        pdfOptions = ["--margin-bottom 0", "--margin-right 0", "--margin-left 0"];
+    }
+
+    wkhtmltopdf(event.html, pdfOptions)
         .then(buffer => {
             callback(null, {
                 data: buffer.toString("base64")

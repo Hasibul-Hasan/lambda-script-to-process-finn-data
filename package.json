@@ -1,7 +1,7 @@
 {
   "name": "lambda-html-to-pdf",
   "version": "1.0.0",
-  "license" : "UNLICENSED",
+  "license": "UNLICENSED",
   "description": "AWS Lambda function that converts HTML pages to PDF documents",
   "scripts": {
     "lint": "./node_modules/.bin/eslint --quiet .",
@@ -19,6 +19,6 @@
   },
   "devDependencies": {
     "eslint": "^4.0.0",
-    "eslint-config-zeplin": "git+ssh://git@github.com/zeplin/eslint-config-zeplin.git#v1.x.x"
+    "eslint-config-zeplin": "zeplin/eslint-config-zeplin.git#v1.x.x"
   }
 }

@@ -20,5 +20,8 @@
   "devDependencies": {
     "eslint": "^4.0.0",
     "eslint-config-zeplin": "zeplin/eslint-config-zeplin.git#v1.x.x"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.340.0"
   }
 }

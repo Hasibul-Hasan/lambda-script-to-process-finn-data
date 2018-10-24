@@ -116,6 +116,35 @@ const uploadToS3 = async (buffer, key, callback) => {
     }
 };
 
+const sendMessageToSQS = async (eventParams, callback) => {
+    const QUEUE_URL = eventParams.QueueUrl || process.env.SQS_QUEUE_URL;
+
+    if (QUEUE_URL) {
+        try {
+            console.log(`Sending message to SQS Queue: ${QUEUE_URL}`);
+
+            const MessageBody = {
+                fileKey: eventParams.saveToPath || "",
+                data: eventParams.callbackData || ""
+            };
+
+            await SQS.sendMessage({
+                QueueUrl: QUEUE_URL,
+                MessageBody: JSON.stringify(MessageBody),
+                MessageGroupId: "htmlToPdf"
+            }).promise();
+
+            console.log(`Message sent to SQS Queue: ${QUEUE_URL}`);
+
+            return;
+        } catch (err) {
+            callback(errorUtil.createErrorResponse(500, "Error while sending message to SQS", err));
+        }
+    } else {
+        console.log("NOT sending to SQS");
+    }
+};
+
 exports.handler = async (event, context, callback) => {
     // Log event
     console.log(event);
@@ -163,26 +192,7 @@ exports.handler = async (event, context, callback) => {
         }
 
         // If we have been given a SQS Queue URL we will send message to SQS
-        const QUEUE_URL = eventParams.QueueUrl || process.env.SQS_QUEUE_URL;
-
-        if (QUEUE_URL) {
-            console.log(`Sending message to SQS Queue: ${QUEUE_URL}`);
-
-            const MessageBody = {
-                fileKey: eventParams.saveToPath || "",
-                data: eventParams.callbackData || ""
-            };
-
-            await SQS.sendMessage({
-                QueueUrl: QUEUE_URL,
-                MessageBody: JSON.stringify(MessageBody),
-                MessageGroupId: "htmlToPdf"
-            }).promise();
-
-            console.log(`Message sent to SQS Queue: ${QUEUE_URL}`);
-        } else {
-            console.log("NOT sending to SQS");
-        }
+        await sendMessageToSQS(eventParams, callback);
 
         callback(null, {
             data: response

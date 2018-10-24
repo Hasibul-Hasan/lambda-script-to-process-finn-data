@@ -7,10 +7,10 @@ AWS Lambda script that generates PDF
 1. You can call the function directly (see [this](https://stackoverflow.com/questions/33659059/invoke-amazon-lambda-function-from-node-app?answertab=active#tab-top)), or
 2. You can create a .json file containing the parameters and `PUT` it to `HTML2PDF/New` folder in S3-bucket 
 3. The lambda script will then create the PDF buffer AND
- a. Move the .json file from HTML2PDF/New` to HTML2PDF/Processed` (if you are calling the script by putting a .json file in S3)
- b. Save the PDF buffer to a PDF file (if you have added the `saveToPath` parameter
- c. Send message to AWS SQS Queue (if you have added the `QueueUrl` parameter
- d. Additionally, it can also include specified data (that you may need in your code logic) in the SQS message if you add the `callbackData` parameter.
+ - Move the .json file from HTML2PDF/New` to HTML2PDF/Processed` (if you are calling the script by putting a .json file in S3)
+ - Save the PDF buffer to a PDF file (if you have added the `saveToPath` parameter
+ - Send message to AWS SQS Queue (if you have added the `QueueUrl` parameter
+ - Additionally, it can also include specified data (that you may need in your code logic) in the SQS message if you add the `callbackData` parameter.
 
 ## Example parameters
 ```json

@@ -178,7 +178,7 @@ exports.handler = async (event, context, callback) => {
         let response = buffer.toString("base64");
 
         // If we have been given a path to save to S3, we save the file
-        if (eventParams.saveToPath) {
+        if (bucket && eventParams.saveToPath) {
             await uploadToS3(buffer, bucket, eventParams.saveToPath, callback);
             response = `PDF generated and saved to ${eventParams.saveToPath}`;
         }

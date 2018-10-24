@@ -22,6 +22,7 @@
     "eslint-config-zeplin": "zeplin/eslint-config-zeplin.git#v1.x.x"
   },
   "dependencies": {
-    "aws-sdk": "^2.340.0"
+    "aws-sdk": "^2.340.0",
+    "lodash": "^4.17.11"
   }
 }

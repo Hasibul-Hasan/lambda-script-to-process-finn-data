@@ -21,6 +21,30 @@ jobs:
           name: Run lint check
           command: npm run lint
 
+  deploy_local:
+      docker:
+        - image: zeplin/amazon-linux-ami:cci-node8
+      steps:
+        - checkout
+        - run:
+            name: Install zip
+            command: sudo yum -y install zip
+        - restore_cache:
+            key: deploy-dependency-cache-{{ checksum "package-lock.json" }}
+        - run:
+            name: Remove zeplin packages from node_modules
+            command: rm -rf node_modules/zeplin-*
+        - run:
+            name: Install npm dependencies for deployment
+            command: npm install --production
+        - save_cache:
+            key: deploy-dependency-cache-{{ checksum "package-lock.json" }}
+            paths:
+              - ./node_modules
+        - run:
+            name: Deploy
+            command: npm run deploy-local
+
   deploy_dev:
       docker:
         - image: zeplin/amazon-linux-ami:cci-node8
@@ -101,6 +125,12 @@ workflows:
           filters:
             tags:
               only: /.*/
+      - deploy_local:
+          requires:
+            - build_and_test
+          filters:
+            branches:
+              only: local
       - deploy_dev:
           requires:
             - build_and_test

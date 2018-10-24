@@ -176,7 +176,8 @@ exports.handler = async (event, context, callback) => {
 
             await SQS.sendMessage({
                 QueueUrl: QUEUE_URL,
-                MessageBody: JSON.stringify(MessageBody)
+                MessageBody: JSON.stringify(MessageBody),
+                MessageGroupId: 1
             }).promise();
 
             console.log(`Message sent to SQS Queue: ${QUEUE_URL}`);

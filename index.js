@@ -4,13 +4,18 @@ const wkhtmltopdf = require("./utils/wkhtmltopdf");
 const errorUtil = require("./utils/error");
 const _ = require("lodash");
 
+const BUCKET = process.env.S3_BUCKET;
+const REGION = process.env.AWS_REGION;
+const PROCESSED_FOLDER = process.env.S3_PROCESSED_FOLDER || "HTML2PDF/Processed";
+
 const AWS = require("aws-sdk");
 const S3 = new AWS.S3({
     signatureVersion: "v4"
 });
 
-const BUCKET = process.env.S3_BUCKET;
-const PROCESSED_FOLDER = process.env.S3_PROCESSED_FOLDER || "HTML2PDF/Processed";
+const SQS = new AWS.SQS({
+    region: REGION
+});
 
 const getParamsFromS3 = async (bucket, key, callback) => {
     if (!bucket || !key) {
@@ -143,6 +148,8 @@ exports.handler = async (event, context, callback) => {
             eventParams.html = event.html;
             eventParams.options = event.options;
             eventParams.saveToPath = event.saveToPath;
+            eventParams.QueueUrl = event.QueueUrl;
+            eventParams.callbackData = event.callbackData;
         }
 
         // Using wkhtmltopdf, we now get a pdf content buffer
@@ -153,6 +160,28 @@ exports.handler = async (event, context, callback) => {
         if (eventParams.saveToPath) {
             await uploadToS3(buffer, eventParams.saveToPath, callback);
             response = `PDF generated and saved to ${eventParams.saveToPath}`;
+        }
+
+        // If we have been given a SQS Queue URL we will send message to SQS
+        const QUEUE_URL = eventParams.QueueUrl || process.env.SQS_QUEUE_URL;
+
+        if (QUEUE_URL) {
+            console.log(`Sending message to SQS Queue: ${QUEUE_URL}`);
+
+            const MessageBody = {
+                type: "htmlToPdf",
+                fileKey: eventParams.saveToPath || "",
+                data: eventParams.callbackData || ""
+            };
+
+            await SQS.sendMessage({
+                QueueUrl: QUEUE_URL,
+                MessageBody: JSON.stringify(MessageBody)
+            }).promise();
+
+            console.log(`Message sent to SQS Queue: ${QUEUE_URL}`);
+        } else {
+            console.log("NOT sending to SQS");
         }
 
         callback(null, {

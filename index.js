@@ -169,7 +169,6 @@ exports.handler = async (event, context, callback) => {
             console.log(`Sending message to SQS Queue: ${QUEUE_URL}`);
 
             const MessageBody = {
-                type: "htmlToPdf",
                 fileKey: eventParams.saveToPath || "",
                 data: eventParams.callbackData || ""
             };
@@ -177,7 +176,7 @@ exports.handler = async (event, context, callback) => {
             await SQS.sendMessage({
                 QueueUrl: QUEUE_URL,
                 MessageBody: JSON.stringify(MessageBody),
-                MessageGroupId: 1
+                MessageGroupId: "htmlToPdf"
             }).promise();
 
             console.log(`Message sent to SQS Queue: ${QUEUE_URL}`);

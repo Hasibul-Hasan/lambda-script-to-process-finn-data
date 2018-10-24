@@ -3,15 +3,8 @@ process.env.PATH = `${process.env.PATH}:${process.env.LAMBDA_TASK_ROOT}`;
 const wkhtmltopdf = require("./utils/wkhtmltopdf");
 const errorUtil = require("./utils/error");
 const _ = require("lodash");
-
-const BUCKET = process.env.S3_BUCKET;
-const PROCESSED_FOLDER = process.env.S3_PROCESSED_FOLDER || "HTML2PDF/Processed";
-
 const AWS = require("aws-sdk");
-const S3 = new AWS.S3({
-    signatureVersion: "v4"
-});
-
+const S3 = new AWS.S3({ signatureVersion: "v4" });
 const SQS = new AWS.SQS();
 
 const getParamsFromS3 = async (bucket, key, callback) => {
@@ -38,7 +31,9 @@ const getParamsFromS3 = async (bucket, key, callback) => {
 };
 
 const moveS3File = async (bucket, from, toFolder, callback) => {
-    if (!bucket || !from || !toFolder) {
+    const PROCESSED_FOLDER = process.env.S3_PROCESSED_FOLDER || "HTML2PDF/Processed";
+
+    if (!bucket || !from) {
         const errorResponse = errorUtil.createErrorResponse(400, "Missing required parameters to move file");
 
         callback(errorResponse);
@@ -58,7 +53,7 @@ const moveS3File = async (bucket, from, toFolder, callback) => {
         await S3.copyObject({
             Bucket: bucket,
             CopySource: `${bucket}/${from}`,
-            Key: `${toFolder}/${fileName}`
+            Key: `${PROCESSED_FOLDER}/${fileName}`
         }).promise();
 
         await S3.deleteObject({
@@ -66,7 +61,7 @@ const moveS3File = async (bucket, from, toFolder, callback) => {
             Key: from
         }).promise();
 
-        return `File moved from: ${from} to ${toFolder}/${fileName}`;
+        return `File moved from: ${from} to ${PROCESSED_FOLDER}/${fileName}`;
     } catch (err) {
         callback(errorUtil.createErrorResponse(500, "Error occured downloading parameter file from S3", err));
     }
@@ -91,7 +86,7 @@ const pdfBuffer = async (html, options, callback) => {
     }
 };
 
-const uploadToS3 = async (buffer, key, callback) => {
+const uploadToS3 = async (buffer, bucket, key, callback) => {
     if (!buffer) {
         const errorResponse = errorUtil.createErrorResponse(400, "No PDF buffer available for upload");
 
@@ -103,7 +98,7 @@ const uploadToS3 = async (buffer, key, callback) => {
         const object = await S3.putObject({
             Body: buffer,
             ContentType: "application/pdf",
-            Bucket: BUCKET,
+            Bucket: bucket,
             Key: key
         }).promise();
 
@@ -147,7 +142,7 @@ exports.handler = async (event, context, callback) => {
     console.log(event);
 
     let eventParams = {};
-    const bucket = _.get(event, "Records[0].s3.bucket.name", "");
+    const bucket = _.get(event, "Records[0].s3.bucket.name", "") || process.env.S3_BUCKET;
     const key = _.get(event, "Records[0].s3.object.key", "");
 
     // Bucket or Key is missing from trigger (which means the function has NOT been trigged by S3 upload)
@@ -165,7 +160,7 @@ exports.handler = async (event, context, callback) => {
             eventParams = await getParamsFromS3(bucket, key, callback);
             console.log("Got params from S3 file", eventParams);
 
-            await moveS3File(bucket, key, PROCESSED_FOLDER, callback);
+            await moveS3File(bucket, key, callback);
         }
 
         // Either the file did not contain params
@@ -184,7 +179,7 @@ exports.handler = async (event, context, callback) => {
 
         // If we have been given a path to save to S3, we save the file
         if (eventParams.saveToPath) {
-            await uploadToS3(buffer, eventParams.saveToPath, callback);
+            await uploadToS3(buffer, bucket, eventParams.saveToPath, callback);
             response = `PDF generated and saved to ${eventParams.saveToPath}`;
         }
 

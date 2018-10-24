@@ -5,7 +5,6 @@ const errorUtil = require("./utils/error");
 const _ = require("lodash");
 
 const BUCKET = process.env.S3_BUCKET;
-const REGION = process.env.AWS_REGION;
 const PROCESSED_FOLDER = process.env.S3_PROCESSED_FOLDER || "HTML2PDF/Processed";
 
 const AWS = require("aws-sdk");
@@ -13,9 +12,7 @@ const S3 = new AWS.S3({
     signatureVersion: "v4"
 });
 
-const SQS = new AWS.SQS({
-    region: REGION
-});
+const SQS = new AWS.SQS();
 
 const getParamsFromS3 = async (bucket, key, callback) => {
     if (!bucket || !key) {

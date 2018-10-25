@@ -35,3 +35,23 @@ AWS Lambda script that generates PDF
 
 Please also [see this](wkhtmltopdf) for all options you have for PDF generation!
 If its not clear yet, you add your PDF options to the `options` parameter above!
+
+## Using this with AWS SQS
+If you do not know what AWS SQS is, please take a [look here](https://aws.amazon.com/sqs/).
+
+Your business logic may require that the app should be notified when the lambda script is done. In those cases, you have to add the `QueueUrl` parameter when you are developing. For the UniteLiving.com app in dev/test/prod, this will be done automatically using settings (in other words, you **do not** need enter `QueueUrl` parameter.
+
+For localhost, since we have to make sure that the correct developer instace gets the message, you **have to** add the  `QueueUrl` parameter.
+
+Here are the available SQS queuee URLs for localhosts:
+- https://sqs.eu-west-1.amazonaws.com/628439637519/ul-local-hasibul.fifo
+- https://sqs.eu-west-1.amazonaws.com/628439637519/ul-local-masum.fifo
+- https://sqs.eu-west-1.amazonaws.com/628439637519/ul-local-pappu.fifo
+- https://sqs.eu-west-1.amazonaws.com/628439637519/ul-local-prosenjit.fifo
+- https://sqs.eu-west-1.amazonaws.com/628439637519/ul-local-risul.fifo
+- https://sqs.eu-west-1.amazonaws.com/628439637519/ul-local-shahjalal.fifo
+- https://sqs.eu-west-1.amazonaws.com/628439637519/ul-local-shakti.fifo
+- https://sqs.eu-west-1.amazonaws.com/628439637519/ul-local-touhid.fifo
+
+
+

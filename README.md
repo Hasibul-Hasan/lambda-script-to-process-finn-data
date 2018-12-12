@@ -47,8 +47,9 @@ Here are the available SQS queuee URLs for localhosts:
 - https://sqs.eu-west-1.amazonaws.com/628439637519/ul-local-hasibul.fifo
 - https://sqs.eu-west-1.amazonaws.com/628439637519/ul-local-masum.fifo
 - https://sqs.eu-west-1.amazonaws.com/628439637519/ul-local-pappu.fifo
-- https://sqs.eu-west-1.amazonaws.com/628439637519/ul-local-prosenjit.fifo
+- https://sqs.eu-west-1.amazonaws.com/628439637519/ul-local-rashadul.fifo
 - https://sqs.eu-west-1.amazonaws.com/628439637519/ul-local-risul.fifo
+- https://sqs.eu-west-1.amazonaws.com/628439637519/ul-local-samiul.fifo
 - https://sqs.eu-west-1.amazonaws.com/628439637519/ul-local-shahjalal.fifo
 - https://sqs.eu-west-1.amazonaws.com/628439637519/ul-local-shakti.fifo
 - https://sqs.eu-west-1.amazonaws.com/628439637519/ul-local-touhid.fifo

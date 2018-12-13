@@ -139,11 +139,13 @@ const sendMessageToSQS = async (eventParams, callback) => {
 
 exports.handler = async (event, context, callback) => {
     // Log event
-    console.log(event);
+    console.log("START new event", event);
 
     let eventParams = {};
     const bucket = _.get(event, "Records[0].s3.bucket.name", "") || process.env.S3_BUCKET;
     const key = _.get(event, "Records[0].s3.object.key", "");
+
+    console.log("Key", key);
 
     // Bucket or Key is missing from trigger (which means the function has NOT been trigged by S3 upload)
     // Or html param is missing if the fuction has been called manually
@@ -161,11 +163,15 @@ exports.handler = async (event, context, callback) => {
             console.log("Got params from S3 file", eventParams);
 
             await moveS3File(bucket, key, callback);
+
+            console.log("File moved to PROCESSED_FOLDER", key);
         }
 
         // Either the file did not contain params
         // Or the function has been called manually/directly
         if (_.isEmpty(eventParams)) {
+            console.log("Got empty eventParams. Set default", key);
+
             eventParams.html = event.html;
             eventParams.options = event.options;
             eventParams.saveToPath = event.saveToPath;
@@ -178,13 +184,18 @@ exports.handler = async (event, context, callback) => {
         let response = buffer.toString("base64");
 
         // If we have been given a path to save to S3, we save the file
+        console.log("Pdf prepared, lets save the pdf to ", eventParams.saveToPath);
         if (bucket && eventParams.saveToPath) {
             await uploadToS3(buffer, bucket, eventParams.saveToPath, callback);
             response = `PDF generated and saved to ${eventParams.saveToPath}`;
         }
 
+        console.log("Send SQS to ", eventParams.QueueUrl);
+
         // If we have been given a SQS Queue URL we will send message to SQS
         await sendMessageToSQS(eventParams, callback);
+
+        console.log("Sent SQS", key);
 
         callback(null, {
             data: response

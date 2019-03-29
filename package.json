@@ -8,7 +8,7 @@
     "pack": "rm -f package.zip && zip package.zip -r index.js wkhtmltopdf utils",
     "deploy-local": "npm run pack && aws lambda update-function-code --region eu-west-1 --function-name htmlToPdf-local --zip-file fileb://`pwd`/package.zip",
     "deploy-dev": "npm run pack && aws lambda update-function-code --region eu-west-1 --function-name htmlToPdf-dev --zip-file fileb://`pwd`/package.zip",
-    "deploy-test": "npm run pack && aws lambda update-function-code --region eu-west-1 --function-name htmlToPdf-test --zip-file fileb://`pwd`/package.zip",
+    "deploy-test": "npm run pack && aws lambda update-function-code --region eu-west-1 --function-name htmlToPdf-test --zip-file fileb://`pwd`/package.zip && aws lambda update-function-code --region eu-west-1 --function-name htmlToPdf-demo --zip-file fileb://`pwd`/package.zip",
     "deploy-prod": "npm run pack && aws lambda update-function-code --region eu-west-1 --function-name htmlToPdf --zip-file fileb://`pwd`/package.zip"
   },
   "repository": {

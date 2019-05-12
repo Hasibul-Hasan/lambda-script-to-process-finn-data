@@ -24,6 +24,9 @@
   },
   "dependencies": {
     "aws-sdk": "^2.340.0",
-    "lodash": "^4.17.11"
+    "jszip": "^3.2.1",
+    "lodash": "^4.17.11",
+    "xml2js": "^0.4.19",
+    "xmlbuilder": "^13.0.1"
   }
 }

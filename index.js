@@ -180,8 +180,10 @@ exports.handler = async (event, context, callback) => {
         }
 
         // Using wkhtmltopdf, we now get a pdf content buffer
-        const buffer = await pdfBuffer(eventParams.html, eventParams.options, callback);
-        let response = buffer.toString("base64");
+        // const buffer = await pdfBuffer(eventParams.html, eventParams.options, callback);
+        // let response = buffer.toString("base64");
+
+        const prepareZipFileForUploadInFinn = await createZIPFileForUploadInFinn(propertyData, userData);
 
         // If we have been given a path to save to S3, we save the file
         console.log("Pdf prepared, lets save the pdf to ", eventParams.saveToPath);
@@ -203,5 +205,24 @@ exports.handler = async (event, context, callback) => {
     } catch (error) {
         callback(errorUtil.createErrorResponse(500, "Internal server error", error));
     }
+};
+
+const createZIPFileForUploadInFinn = async (propertyData, userData) => {
+
+    let JSZip = require("jszip");
+
+    let zip = new JSZip();
+
+    let XMLData = await createXMLFileData(propertyData, userData);
+
+
+
+
+};
+
+const createXMLFileData = async (propertyData, userData) => {
+
+    console.log("")
+
 };
 

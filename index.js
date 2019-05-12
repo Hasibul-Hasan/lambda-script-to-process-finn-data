@@ -204,3 +204,4 @@ exports.handler = async (event, context, callback) => {
         callback(errorUtil.createErrorResponse(500, "Internal server error", error));
     }
 };
+
